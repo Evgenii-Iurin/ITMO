@@ -1,4 +1,6 @@
-class Stack():
+import sys
+
+class Stack:
     def __init__(self):
         self.values = []
 
@@ -23,7 +25,7 @@ def main():
     stack = Stack()
 
     for _ in range(number_of_operation):
-        operation = list(input().split())
+        operation = sys.stdin.readline().strip().split()
 
         if operation[0] == "1":
             x = int(operation[1])
@@ -38,7 +40,6 @@ def main():
         
         elif operation[0] == "3":
             print(stack.get_last()[1])
-
 
 if __name__ == "__main__":
     main()
