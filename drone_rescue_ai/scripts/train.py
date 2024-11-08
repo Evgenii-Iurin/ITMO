@@ -18,7 +18,7 @@ from pathlib import Path
 log = True
 state_dim = (4, 84, 84)
 total_steps = 0
-action_dim = 5         # Discrete action space (Don't change it)
+action_dim = 4         # Discrete action space (Don't change it)
 num_steps = 1024       # the number of steps to be performed in the environment with each policy rollout. Divide by 4
 max_steps = 1_024_000  # the max number of steps per complete training
 gamma = 0.99           # Gamma, parameter in advantage computation
@@ -28,7 +28,7 @@ clip_coef = 0.2        # Clipping coefficient
 norm_adv = True        # Advantage normalization
 
 # Training Parameters
-lr = 0.00025
+lr = 0.005
 actor_lr = 0.00025      # If separated actor and critic architecture is used
 critic_lr = 0.00025     # If separated actor and critic architecture is used
 c2 = 0.01               # Coefficient of the entropy
