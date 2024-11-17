@@ -70,7 +70,8 @@ class Environment():
         img.save(save_path, format="JPEG")
 
 
-if __name__ == "__main__":
-    env = Environment()
-    print(env.area)
-    env.save_env_as_image('./env.jpg')
+# !HOW TO USE!
+# if __name__ == "__main__":
+#     env = Environment()
+#     print(env.area)
+#     env.save_env_as_image('./env.jpg')
