@@ -6,26 +6,46 @@ class Environment():
     def __init__(self):
         self.area_size = 100 # one side side
         self.num_targets = 10 # number of targets
-        self.num_obstacles = 30 # number of obstacles   
-        self.obstacles = [
-            np.array([1, 1, 1]),
-            np.array([[1], [1], [1]])
-        ]
-        self._generate_area()
+        self.num_obstacles = 50 # number of obstacles   
+        self.obstacles_map = {
+            0: (4, 2),
+            1: (3, 5),
+            2: (5, 5),
+            3: (2, 10),
+            4: (10, 2),
+        }
         self.color_map = {
             0: 'white', 
-            1: 'red'
+            1: 'black'
         }
+        self._generate_area()
 
     def _generate_area(self):
         # TODO : set attribute if None
         self.area = np.zeros((self.area_size, self.area_size))
         obstacles_x = np.random.randint(0, self.area_size, self.num_obstacles)
         obstacles_y = np.random.randint(0, self.area_size, self.num_obstacles)
-        for x, y in zip(obstacles_x, obstacles_y):
-            self.area[x, y] = 1
         
-        self.area[0,0] = 1
+        # Extend obstacles
+        for x, y in zip(obstacles_x, obstacles_y):
+            sampled_obstacle = self.obstacles_map[
+                np.random.choice(list(self.obstacles_map.keys()))
+                ]
+            self._insert_kernel(sampled_obstacle, (x, y))
+
+    def _insert_kernel(self, kernel_shape: tuple[int, int], point: tuple[int, int]):
+        kernel_center = (kernel_shape[0] // 2, kernel_shape[1] // 2)
+
+        # Calculate the bounds for applying the kernel
+        start_row = max(point[0] - kernel_center[0], 0)
+        end_row = min(point[0] + kernel_center[0] + 1, self.area.shape[0])
+
+        start_col = max(point[1] - kernel_center[1], 0)
+        end_col = min(point[1] + kernel_center[1] + 1, self.area.shape[1])
+
+        # Apply the kernel to the array
+        self.area[start_row:end_row, start_col:end_col] = 1
+
 
     def save_env_as_image(self, save_path):
         """
