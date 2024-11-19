@@ -2,13 +2,13 @@ from random import randint
 import sys
 
 class Vertex:
-    def __init__(self, key=None, priority=None, value=None, left=None, right=None, sz=1):
+    def __init__(self, key=None, priority=None, value=None, left=None, right=None, size=1):
         self.key: int = key
         self.priority: int = priority
         self.value: int = value
         self.left: Vertex = left
         self.right: Vertex = right
-        self.sz: int = sz  # !new!
+        self.size: int = size
 
     def __str__(self):
         lines: dict = {}
@@ -35,12 +35,12 @@ def print_tree(v: Vertex, skip: int, d: int, lines: dict) -> int:
 
 
 def size_of(v: Vertex) -> int:
-    return v.sz if v is not None else 0
+    return v.size if v is not None else 0
 
 
 def recalc(v: Vertex) -> Vertex:
     if v is not None:
-        v.sz = size_of(v.left) + size_of(v.right) + 1
+        v.size = size_of(v.left) + size_of(v.right) + 1
     return v
 
 
@@ -74,16 +74,38 @@ def insert(root: Vertex, key0: int, value: int) -> Vertex:
     c = Vertex(key0, randint(1000, 9999), value)
     return merge(a, merge(c, d))
 
+def fill_array(v: Vertex, res_arr: list):
+    if v is None:
+        return
+
+    left_key = v.left.key +1 if v.left is not None else -1
+    right_key = v.right.key +1 if v.right is not None else -1
+    
+    res_arr[v.key] = (v.value, left_key, right_key)
+    
+    fill_array(v.left, res_arr)
+    fill_array(v.right, res_arr)
+
+
 
 def main():
     tree: Vertex = None
     n = int(input())
-    arr = list(map(int, sys.stdin.readline().strip().split())) 
-    print(n)
+    arr = list(map(int, sys.stdin.readline().strip().split()))
     for i in range(n):
         tree = insert(tree, i, arr[i])
     print(tree)
-    print(1)
+
+    # Print output
+    print(n)
+    res_arr = [None] * n
+    fill_array(tree, res_arr)
+
+    for _, v in enumerate(res_arr):
+        print(f'{v[0]} {v[1]} {v[2]}')
+    
+    print(tree.key + 1)
+
 
 
 if __name__ == '__main__':
