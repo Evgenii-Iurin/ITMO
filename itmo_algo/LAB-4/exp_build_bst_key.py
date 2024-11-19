@@ -57,7 +57,7 @@ def merge(root1: Vertex, root2: Vertex) -> Vertex:
         return recalc(root2)
 
 
-def split(root: Vertex, key0: int) -> (Vertex, Vertex):
+def split(root: Vertex, key0: int) -> tuple[Vertex, Vertex]:
     if root is None:
         return None, None
     if root.key < key0:
