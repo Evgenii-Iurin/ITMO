@@ -20,6 +20,7 @@ class Environment():
             2: 'red', # target point
             10: 'gray'
         }
+        self.done = False
         self.area = np.zeros((self.area_size, self.area_size))
         self.observation_area = (9,9) # drone observation area TODO: should be as agent parameter
         self.visited_area = np.full((self.area_size, self.area_size), 10)
@@ -40,19 +41,56 @@ class Environment():
         # Add target point
         self._insert_kernel((3, 3), (target_point_x, target_point_y), 2)
 
+    def step(self, action):
+        # Define movement
+        if action == 0:  # up
+            new_position = self.player_position + np.array([0, -1])
+        elif action == 1:  # down
+            new_position = self.player_position + np.array([0, 1])
+        elif action == 2:  # left
+            new_position = self.player_position + np.array([-1, 0])
+        elif action == 3:  # right
+            new_position = self.player_position + np.array([1, 0])
+        elif action == 4:  # stop
+            new_position = self.player_position + np.array([0, 0])
+        else:
+            # Stop if action is unknown
+            new_position = self.player_position + np.array([0, 0])
+            
+        # Check boundaries
+        new_position = np.clip(new_position, 0, self.area_size)
+
+        if self.area[new_position] == 1: # obstacle
+            self.done = True
+            return player_position, self.done
+
+        player_position = new_position
+        observation = self.get_observation(self.player_position)
+        self.visited_area = self._update_visited_area(self, pl)
+
+        if np.any(observation == 2): # target flag
+            self.done = True
+
+        return player_position, self.done, observation
+
     def _insert_kernel(self, kernel_shape: tuple[int, int], point: tuple[int, int], fill_with: int):
         start_row, end_row, start_col, end_col = self._calculate_edges_of_kernel(self.area, kernel_shape, point)
         self.area[start_row:end_row, start_col:end_col] = fill_with
 
 
     def get_observation(self, agent_position: tuple[int, int]) -> np.ndarray:
-        start_row, end_row, start_col, end_col = self._calculate_edges_of_kernel(self.area, self.observation_area, agent_position)
-        observation = self.area[start_row:end_row, start_col:end_col] 
-        self._update_visited_area(start_row, end_row, start_col, end_col, observation)
+        start_row, end_row, start_col, end_col = self._calculate_edges_of_kernel(
+            self.area, self.observation_area, agent_position
+        )
+        observation = self.area[start_row:end_row, start_col:end_col]
         return observation
 
-    def _update_visited_area(self, start_row, end_row, start_col, end_col, observation):
-        self.visited_area[start_row:end_row, start_col:end_col] = observation
+    def _update_visited_area(self, agent_position: tuple[int, int]):
+        # Updates the visited area directly
+        start_row, end_row, start_col, end_col = self._calculate_edges_of_kernel(
+            self.area, self.observation_area, agent_position
+        )
+        self.visited_area[start_row:end_row, start_col:end_col] = self.area[start_row:end_row, start_col:end_col]
 
     @staticmethod
     def get_random_x_y(max_size: int, num_of_samples: int) -> list[int] | int:
