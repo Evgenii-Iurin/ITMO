@@ -1,5 +1,5 @@
 import unittest
-from drone_rescue_ai.environment.environment import DroneEnv
+from drone_rescue_ai.experiments.environment import DroneEnv
 import numpy as np
 
 class TestSimpleDotGameEnv(unittest.TestCase):
