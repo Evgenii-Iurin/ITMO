@@ -54,7 +54,7 @@ class Environment():
             new_position = agent_position + np.array([0, 0])
             
         new_position = tuple(np.clip(new_position, 0, (self.area_size[0] - 1, self.area_size[1] - 1)))
-        observation, observation_binary_mask = self._get_observation(new_position, observation_area)
+        observation, observation_binary_mask, metadata = self._get_observation(new_position, observation_area)
 
         # Check if the agent doesn't hit the obstacle
         if self.area[new_position] == self.object_map.get('OBSTACLE'): # obstacle
@@ -64,16 +64,27 @@ class Environment():
         if np.any(observation == self.object_map.get("TARGET_POINT")): # target point
             self.done = True
 
-        return new_position, self.done, observation, observation_binary_mask
+        return new_position, self.done, observation, observation_binary_mask, metadata
 
 
     def _get_observation(self, agent_position: tuple[int, int], observation_area: tuple[int, int]) -> np.ndarray:
         start_row, end_row, start_col, end_col = self._calculate_edges_of_kernel(
             self.area, observation_area, agent_position
         )
+        
+        # Calculate agent position inside local observation area
+        metadata = {
+            "agent_position_in_local_observation": (
+                agent_position[0] - start_row,  # x
+                agent_position[1] - start_col   # y
+            )
+        }
+
+        observation = self.area[start_row:end_row, start_col:end_col]
+
         binary_mask = np.zeros(self.area_size)
         binary_mask[start_row:end_row, start_col:end_col] = 1
-        return self.area[start_row:end_row, start_col:end_col], binary_mask
+        return observation, binary_mask, metadata
 
     def get_env_size(self) -> int:
         return self.area_size

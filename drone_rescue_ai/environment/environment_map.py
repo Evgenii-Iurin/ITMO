@@ -2,14 +2,16 @@ COLOR_MAP = {
     'BACKGROUND': 'white',
     'OBSTACLE': 'black',
     'TARGET_POINT': 'red',
-    'NOT_VISITED_AREA': 'gray'
+    'NOT_VISITED_AREA': 'gray',
+    "AGENT_POSITION": 'red'
 }
 
 OBJECT_MAP = {
     'BACKGROUND': 0,
     'OBSTACLE': 1,
     'TARGET_POINT': 2,
-    'NOT_VISITED_AREA': 3
+    'NOT_VISITED_AREA': 3,
+    'AGENT_POSITION': 4
 }
 
 OBSTACLE_MAP = {
